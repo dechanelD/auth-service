@@ -1,0 +1,18 @@
+server:
+  port: 8099
+  servlet:
+    context-path: /auth-service/api/v1
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  jpa:
+    defer-datasource-initialization: 'true'
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQLDialect
+  datasource:
+    url: jdbc:mysql://localhost:3306/dech_user_db
+    username: root
+    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    show-sql: true
