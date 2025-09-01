@@ -40,6 +40,67 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(ErrorException.class)
+    public ResponseEntity<ErrorResponse> handleErrorException(ErrorException ex) {
+        LOGGER.error("Handling ErrorException: {}", ex.getMessage(), ex);
+        final var errorResponse = ErrorResponse.builder()
+                .code(HttpStatus.BAD_REQUEST.value())
+                .message(ex.getMessage())
+                .timestamp(ex.getTimestamp().toString())
+                .build();
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException ex) {
+        LOGGER.error("Handling NotFoundException: {}", ex.getMessage(), ex);
+        final var errorResponse = ErrorResponse.builder()
+                .code(HttpStatus.NOT_FOUND.value())
+                .message(ex.getMessage())
+                .timestamp(ex.getTimestamp().toString())
+                .build();
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ErrorResponse> handleConflictException(ConflictException ex) {
+        LOGGER.error("Handling ConflictException: {}", ex.getMessage(), ex);
+        final var errorResponse = ErrorResponse.builder()
+                .code(HttpStatus.CONFLICT.value())
+                .message(ex.getMessage())
+                .timestamp(ex.getTimestamp().toString())
+                .build();
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorizedException(UnauthorizedException ex) {
+        LOGGER.error("Handling UnauthorizedException: {}", ex.getMessage(), ex);
+        final var errorResponse = ErrorResponse.builder()
+                .code(HttpStatus.UNAUTHORIZED.value())
+                .message(ex.getMessage())
+                .timestamp(ex.getTimestamp().toString())
+                .build();
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
+        LOGGER.error("Handling Generic Exception: {}", ex.getMessage(), ex);
+        final var errorResponse = ErrorResponse.builder()
+                .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .message("An unexpected error occurred. Please try again later.")
+                .timestamp(LocalDateTime.now().toString())
+                .build();
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(InvalidUUIDException.class)
+    public ResponseEntity<String> handleInvalidUUIDException(InvalidUUIDException ex) {
+        LOGGER.error("Handling InvalidUUIDException: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
     private String buildFieldErrorMessage(FieldError error) {
         return String.format("Field '%s' %s (rejected value: %s)",
                 error.getField(),

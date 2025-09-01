@@ -6,25 +6,25 @@ import lombok.Getter;
 import java.sql.Timestamp;
 
 @Getter
-public class ErrorExeption extends RuntimeException{
+public class ErrorException extends RuntimeException{
 
     private ProjectError error;
     private  String message;
     private final Timestamp timestamp;
 
-    public ErrorExeption(ProjectError error, String message) {
+    public ErrorException(ProjectError error, String message) {
         super(message);
         this.error = error;
         this.timestamp = new Timestamp(System.currentTimeMillis());
     }
 
-    public ErrorExeption(String message) {
+    public ErrorException(String message) {
         super(message);
         this.message = message;
         this.timestamp = new Timestamp(System.currentTimeMillis());
     }
 
-    public ErrorExeption(ProjectError error) {
+    public ErrorException(ProjectError error) {
         super(error.getCode()+" : "+error.getMessage());
         this.message = error.getCode()+" : "+error.getMessage();
         this.error = error;

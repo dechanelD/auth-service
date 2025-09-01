@@ -2,9 +2,9 @@ package com.dev.dechanel.auth.service.domains.exceptions;
 
 import com.dev.dechanel.auth.service.domains.error.ProjectError;
 
-public class ConflictExeption extends ErrorExeption {
+public class ConflictException extends ErrorException {
 
-    public ConflictExeption(ProjectError error) {
+    public ConflictException(ProjectError error) {
         super(error);
     }
 
