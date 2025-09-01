@@ -9,6 +9,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -96,9 +97,42 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(InvalidUUIDException.class)
-    public ResponseEntity<String> handleInvalidUUIDException(InvalidUUIDException ex) {
+    public ResponseEntity<ErrorResponse> handleInvalidUUIDException(InvalidUUIDException ex) {
         LOGGER.error("Handling InvalidUUIDException: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        final var errorResponse = ErrorResponse.builder()
+                .code(HttpStatus.BAD_REQUEST.value())
+                .message(ex.getMessage())
+                .timestamp(ex.getTimestamp().toString())
+                .build();
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
+        LOGGER.error("Handling MethodArgumentTypeMismatchException: {}", ex.getMessage(), ex);
+        String message = String.format("Invalid value '%s' for parameter '%s'. Expected type is '%s'.",
+                ex.getValue(),
+                ex.getName(),
+                Objects.nonNull(ex.getRequiredType()) ? ex.getRequiredType().getSimpleName() : "unknown");
+
+        final  var errorResponse = ErrorResponse.builder()
+                .code(HttpStatus.BAD_REQUEST.value())
+                .message(message)
+                .timestamp(LocalDateTime.now().toString())
+                .build();
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
+        LOGGER.error("Handling IllegalArgumentException: {}", ex.getMessage(), ex);
+        final var errorResponse = ErrorResponse.builder()
+                .code(HttpStatus.BAD_REQUEST.value())
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now().toString())
+                .build();
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
     private String buildFieldErrorMessage(FieldError error) {
